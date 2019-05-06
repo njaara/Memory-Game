@@ -8,9 +8,9 @@
  // My note
  // should use setTimeout for flipping cards
 
-let moves = 0;
-let matched = 0;
-let openCards = [];
+var moves = 0;
+var matched = 0;
+var openCards = [];
 
 /* List holding all of the cards */
 let cardClasses = [
@@ -51,21 +51,33 @@ function shuffle(array) {
     return array;
 }
 
-// reset all of the variables used in Game
-// call shuffle array
+//Call once, upon loading the app initially
+function init() {
+  restart();
+  let cards = document.querySelectorAll('.card');
+  addClickBehavior(cards);
+  //EXERICSE 0:
+  //Record how long it takes to complete the game,
+  //grab the inital time here. Then, when matched ==8 record the time again.
+  //the total time is the different between these two times.
+}
+
+//Call upon the restart button click
 function restart() {
-  let openCards = [];
-  let moves = 0;
+  console.log('restart');
+  openCards = [];
+  moves = 0;
   let seconds = 0;
   let minutes = 0;
   let hours = 0;
 
-  let matched = 0;
+  matched = 0;
   document.getElementsByClassName('moves')[0].innerHTML = moves;
 
   let cards = document.querySelectorAll('.card');
-  addClickBehavior(cards);
-  applyShuffle(cards);
+  resetCards(cards);
+  //EXERCISE (1)
+  //now update the document to reflect the shuffled cards
 }
 
 // to do: reset card styling based off of incorrect moves, update move counters, legal auxillary checks
@@ -85,8 +97,8 @@ function addClickBehavior(cards) {
         return;
       }
 
+      //only if the firstcard and the second card are in different locations
       if(firstClick != null && secondClick == null) {
-
         secondClick = this.children[0].className;
         secondClickCard = this;
         card.classList.add('open', 'show');
@@ -102,9 +114,8 @@ function addClickBehavior(cards) {
           matched += 1;
 
           //game is complete is 8 matches are found. What to do upon completion
-          if(matched == 8) {
-
-          }
+          //if(matched == 8) {
+          //}
 
         // mismatch
         } else {
@@ -114,7 +125,6 @@ function addClickBehavior(cards) {
               openCards.pop();
               openCards.pop(); 
           }, 1000);
-          console.log('mismatch');
         }
 
         firstClick = secondClick = null;
@@ -127,16 +137,6 @@ function resetCards(cards) {
   cards = shuffle(cards);
   for(let i = 0; i < cards.length; i++){
     cards[i].classList.remove('open', 'show', 'match');
-  }
-}
-
-// get children of cards, remove class, use array provided
-function applyShuffle(cards) {
-  resetCards(cards);
-  for(let i = 0; i < cards.length; i++){
-    //console.log(cards, cards[i], cards[i].firstChild, cards[i].children[0]);
-    //cards.children[0].className = 'fa ' + cardClasses[i];
-    //console.log(cards[i].firstChild);
   }
 }
 
