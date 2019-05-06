@@ -11,7 +11,7 @@
 var moves = 0;
 var matched = 0;
 var openCards = [];
-var time = 0;
+var startTime = null;
 
 /* List holding all of the cards */
 let cardClasses = [
@@ -58,9 +58,7 @@ function init() {
   let cards = document.querySelectorAll('.card');
   addClickBehavior(cards);
   addUniqueID(cards);
-  //TODO
-  //I need to record the time here. Then when matched == 8, record the time and take the different
-  //for the total time it took to finish the game.
+  startTime = new Date();
 }
 
 //Call upon the restart button click
@@ -121,8 +119,18 @@ function addClickBehavior(cards) {
           matched += 1;
 
           //game is complete is 8 matches are found. What to do upon completion
-          //if(matched == 8) {
-          //}
+          if(matched == 8) {
+            //I need to fix this
+            var endTime = new Date();
+            let seconds = (endTime - startTime) * 1000;
+            let minutes = seconds/60;
+            let hours = minutes/60;
+            let days = hours/24;
+            console.log(seconds);
+            console.log(minutes);
+            console.log(hours);
+            console.log(days);
+          }
 
         // mismatch
         } else {
