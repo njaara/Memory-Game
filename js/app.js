@@ -56,10 +56,9 @@ function init() {
   restart();
   let cards = document.querySelectorAll('.card');
   addClickBehavior(cards);
-  //EXERICSE 0:
-  //Record how long it takes to complete the game,
-  //grab the inital time here. Then, when matched ==8 record the time again.
-  //the total time is the different between these two times.
+  //TODO
+  //I need to record the time here. Then when matched == 8, record the time and take the different
+  //for the total time it took to finish the game.
 }
 
 //Call upon the restart button click
@@ -76,7 +75,7 @@ function restart() {
 
   let cards = document.querySelectorAll('.card');
   resetCards(cards);
-  //EXERCISE (1)
+  //TODO
   //now update the document to reflect the shuffled cards
 }
 
