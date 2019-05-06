@@ -11,6 +11,7 @@
 var moves = 0;
 var matched = 0;
 var openCards = [];
+var time = 0;
 
 /* List holding all of the cards */
 let cardClasses = [
@@ -56,6 +57,7 @@ function init() {
   restart();
   let cards = document.querySelectorAll('.card');
   addClickBehavior(cards);
+  addUniqueID(cards);
   //TODO
   //I need to record the time here. Then when matched == 8, record the time and take the different
   //for the total time it took to finish the game.
@@ -63,12 +65,8 @@ function init() {
 
 //Call upon the restart button click
 function restart() {
-  console.log('restart');
   openCards = [];
   moves = 0;
-  let seconds = 0;
-  let minutes = 0;
-  let hours = 0;
 
   matched = 0;
   document.getElementsByClassName('moves')[0].innerHTML = moves;
@@ -77,6 +75,16 @@ function restart() {
   resetCards(cards);
   //TODO
   //now update the document to reflect the shuffled cards
+}
+
+//To avoid pressing the same card twice and getting a match,
+//add a id in the set {0,...,15} to each card
+function addUniqueID(cards) {
+  let id = 0;
+  cards.forEach(function(card) {
+    card.classList.add(id);
+    id += 1;
+  })
 }
 
 // to do: reset card styling based off of incorrect moves, update move counters, legal auxillary checks
@@ -96,8 +104,8 @@ function addClickBehavior(cards) {
         return;
       }
 
-      //only if the firstcard and the second card are in different locations
-      if(firstClick != null && secondClick == null) {
+      if(firstClick != null && secondClick == null &&
+         firstClickCard.classList[1] != card.classList[1]) {
         secondClick = this.children[0].className;
         secondClickCard = this;
         card.classList.add('open', 'show');
