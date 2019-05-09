@@ -12,6 +12,7 @@ var moves = 0;
 var matched = 0;
 var openCards = [];
 var startTime = null;
+var startTimeTick = null;
 
 /* List holding all of the cards */
 let cardClasses = [
@@ -59,6 +60,8 @@ function init() {
   addClickBehavior(cards);
   addUniqueID(cards);
   startTime = new Date();
+  startTimeTick = startTime.getTime();
+
 }
 
 //Call upon the restart button click
@@ -86,11 +89,12 @@ function addUniqueID(cards) {
 }
 
 // to do: reset card styling based off of incorrect moves, update move counters, legal auxillary checks
+
 function addClickBehavior(cards) {
-  let firstClick = null;
-  let firstClickCard = null;
-  let secondClick = null;
-  let secondClickCard = null;
+  var firstClick = null;
+  var firstClickCard = null;
+  var secondClick = null;
+  var secondClickCard = null;
 
   cards.forEach(function(card) {
     card.addEventListener('click', function(e) {
@@ -103,7 +107,7 @@ function addClickBehavior(cards) {
       }
 
       if(firstClick != null && secondClick == null &&
-         firstClickCard.classList[1] != card.classList[1]) {
+        firstClickCard.classList[1] != card.classList[1]) {
         secondClick = this.children[0].className;
         secondClickCard = this;
         card.classList.add('open', 'show');
@@ -111,6 +115,8 @@ function addClickBehavior(cards) {
 
         moves += 1;
         document.getElementsByClassName('moves')[0].innerHTML = moves;
+
+        starRating();
 
         // match found
         if(firstClick == secondClick){
@@ -122,14 +128,15 @@ function addClickBehavior(cards) {
           if(matched == 8) {
             //I need to fix this
             var endTime = new Date();
-            let seconds = (endTime - startTime) * 1000;
-            let minutes = seconds/60;
-            let hours = minutes/60;
-            let days = hours/24;
-            console.log(seconds);
-            console.log(minutes);
-            console.log(hours);
-            console.log(days);
+            var endTimeTick = endTime.getTime();
+            console.log(endTimeTick, startTimeTick, (endTimeTick - startTimeTick)/1000);
+
+            let seconds = Math.floor((endTimeTick - startTimeTick)/1000) % 60;
+            let mins = Math.floor((endTimeTick - startTimeTick)/1000/60);
+
+            console.log('minutes: ' + mins);
+            console.log('seconds: ' + seconds);
+
           }
 
         // mismatch
@@ -138,7 +145,7 @@ function addClickBehavior(cards) {
               firstClickCard.classList.remove('open', 'show');
               secondClickCard.classList.remove('open', 'show');
               openCards.pop();
-              openCards.pop(); 
+              openCards.pop();
           }, 1000);
         }
 
@@ -146,6 +153,26 @@ function addClickBehavior(cards) {
       }
     });
   });
+}
+
+function starRating() {
+  let myStars = document.getElementsByClassName('stars')[0];
+
+  if(moves == 11) {
+    myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
+  }
+
+  if(moves == 14) {
+    myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
+  }
+
+  if(moves == 17) {
+    myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
+  }
+
+  if(moves == 20) {
+    myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
+  }
 }
 
 function resetCards(cards) {
