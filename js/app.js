@@ -5,14 +5,13 @@
  *   - add each card's HTML to the page
  */
 
- // My note
- // should use setTimeout for flipping cards
 
 var moves = 0;
 var matched = 0;
 var openCards = [];
 var startTime = null;
 var startTimeTick = null;
+var score = '5/5 stars';
 
 /* List holding all of the cards */
 let cardClasses = [
@@ -38,6 +37,7 @@ let cardClasses = [
   'fa-bomb',
 ];
 
+
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -49,11 +49,10 @@ function shuffle(array) {
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
-
     return array;
 }
 
-//Call once, upon loading the app initially
+// Call once, upon loading the app initially
 function init() {
   restart();
   let cards = document.querySelectorAll('.card');
@@ -64,7 +63,24 @@ function init() {
 
 }
 
-//Call upon the restart button click
+// Open modal
+function modalBox(mins, seconds, moves, myStars) {
+  var modal = document.getElementById('my-modal');
+  var span = document.getElementsByClassName('close')[0];
+
+  modal.style.display = "block";
+
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  document.getElementsByClassName('final-mins')[0].innerHTML = mins;
+  document.getElementsByClassName('final-secs')[0].innerHTML = seconds;
+  document.getElementsByClassName('final-moves')[0].innerHTML = moves;
+  document.getElementsByClassName('final-score')[0].innerHTML = score;
+}
+
+// Call upon the restart button click
 function restart() {
   openCards = [];
   moves = 0;
@@ -72,14 +88,15 @@ function restart() {
   matched = 0;
   document.getElementsByClassName('moves')[0].innerHTML = moves;
 
-  let cards = document.querySelectorAll('.card');
+  var cards = document.querySelectorAll('.card');
   resetCards(cards);
-  //TODO
-  //now update the document to reflect the shuffled cards
+
+  //TO DO
+  // now update the document to reflect the shuffled cards
 }
 
-//To avoid pressing the same card twice and getting a match,
-//add a id in the set {0,...,15} to each card
+// To avoid pressing the same card twice and getting a match,
+// add a id in the set {0,...,15} to each card
 function addUniqueID(cards) {
   let id = 0;
   cards.forEach(function(card) {
@@ -124,7 +141,7 @@ function addClickBehavior(cards) {
           secondClickCard.classList.add('match');
           matched += 1;
 
-          //game is complete is 8 matches are found. What to do upon completion
+          // game is complete is 8 matches are found. What to do upon completion
           if(matched == 8) {
             //I need to fix this
             var endTime = new Date();
@@ -136,6 +153,8 @@ function addClickBehavior(cards) {
 
             console.log('minutes: ' + mins);
             console.log('seconds: ' + seconds);
+
+            modalBox(mins, seconds, moves);
 
           }
 
@@ -160,27 +179,50 @@ function starRating() {
 
   if(moves == 11) {
     myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
+    score = '4/5 stars';
   }
 
   if(moves == 14) {
     myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
+    score = '3/5 stars';
   }
 
   if(moves == 17) {
     myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
+    score = '2/5 stars';
   }
 
   if(moves == 20) {
     myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
+    score = '1/5 stars';
   }
 }
 
+
 function resetCards(cards) {
-  cards = shuffle(cards);
+  let deck = document.getElementsByClassName('deck');
+  let arr = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+  arr = shuffle(arr);
+
+  let cardsTy = [];
+  //retrieve the mapping from number of i -> type of card
+  for(let i = 0; i < cards.length; i++){
+    let cardTy = document.getElementsByClassName('card')[i].childNodes[1].classList[1];
+    cardsTy.push(cardTy);
+  }
+  //modify the DOM to the shuffled card types
+  for(let i = 0; i < cards.length; i++) {
+    let cardTy = document.getElementsByClassName('card')[i].childNodes[1].classList;
+    cardTy.remove('fa-bicycle', 'fa-bomb', 'fa-paper-plane-o', 'fa-cube',
+                  'fa-diamond', 'fa-bolt', 'fa-leaf', 'fa-anchor');
+    cardTy.add(cardsTy[arr[i]]);
+  }
+
   for(let i = 0; i < cards.length; i++){
     cards[i].classList.remove('open', 'show', 'match');
   }
 }
+
 
 /*
  * set up the event listener for a card. If a card is clicked:
