@@ -11,7 +11,9 @@ var matched = 0;
 var openCards = [];
 var startTime = null;
 var startTimeTick = null;
-var score = '5/5 stars';
+var score = '5 stars';
+var isFirstClick = false;
+
 
 /* List holding all of the cards */
 let cardClasses = [
@@ -52,15 +54,12 @@ function shuffle(array) {
     return array;
 }
 
-// Call once, upon loading the app initially
+// Call once, upon initial load
 function init() {
-  restart();
+  restart(true);
   let cards = document.querySelectorAll('.card');
   addClickBehavior(cards);
   addUniqueID(cards);
-  startTime = new Date();
-  startTimeTick = startTime.getTime();
-
 }
 
 // Open modal
@@ -68,10 +67,10 @@ function modalBox(mins, seconds, moves, myStars) {
   var modal = document.getElementById('my-modal');
   var span = document.getElementsByClassName('close')[0];
 
-  modal.style.display = "block";
+  modal.style.display = 'block';
 
   span.onclick = function() {
-    modal.style.display = "none";
+    modal.style.display = 'none';
   }
 
   document.getElementsByClassName('final-mins')[0].innerHTML = mins;
@@ -80,23 +79,27 @@ function modalBox(mins, seconds, moves, myStars) {
   document.getElementsByClassName('final-score')[0].innerHTML = score;
 }
 
-// Call upon the restart button click
-function restart() {
+function replayButton() {
+  var mod = document.getElementsByClassName('modal');
+  var button = document.getElementById('replay-button');
+  document.getElementById('replay-button').addEventListener('click', playAgain(mod[0]));
+}
+
+function playAgain(modal) {
+  location.reload();
+
   openCards = [];
   moves = 0;
-
   matched = 0;
+
   document.getElementsByClassName('moves')[0].innerHTML = moves;
 
   var cards = document.querySelectorAll('.card');
   resetCards(cards);
-
-  //TO DO
-  // now update the document to reflect the shuffled cards
 }
 
-// To avoid pressing the same card twice and getting a match,
-// add a id in the set {0,...,15} to each card
+/* To avoid pressing the same card twice and getting a match,
+   add a id in the set {0,...,15} to each card */
 function addUniqueID(cards) {
   let id = 0;
   cards.forEach(function(card) {
@@ -105,7 +108,30 @@ function addUniqueID(cards) {
   })
 }
 
-// to do: reset card styling based off of incorrect moves, update move counters, legal auxillary checks
+// called on restart button click
+function restart(isInit = false) {
+  if(!isInit) {
+    location.reload();
+  }
+
+  openCards = [];
+  moves = 0;
+  matched = 0;
+  document.getElementsByClassName('moves')[0].innerHTML = moves;
+
+  var cards = document.querySelectorAll('.card');
+  resetCards(cards);
+}
+
+/* To avoid pressing the same card twice and getting a match,
+   add a id in the set {0,...,15} to each card */
+function addUniqueID(cards) {
+  let id = 0;
+  cards.forEach(function(card) {
+    card.classList.add(id);
+    id += 1;
+  })
+}
 
 function addClickBehavior(cards) {
   var firstClick = null;
@@ -116,6 +142,12 @@ function addClickBehavior(cards) {
   cards.forEach(function(card) {
     card.addEventListener('click', function(e) {
       if(firstClick == null){
+        if(!isFirstClick) {
+          isFirstClick=true;
+          startTime = new Date();
+          startTimeTick = startTime.getTime();
+        }
+
         firstClick = this.children[0].className;
         firstClickCard = this;
         card.classList.add('open', 'show');
@@ -136,14 +168,13 @@ function addClickBehavior(cards) {
         starRating();
 
         // match found
-        if(firstClick == secondClick){
+        if(firstClick == secondClick) {
           firstClickCard.classList.add('match');
           secondClickCard.classList.add('match');
           matched += 1;
 
           // game is complete is 8 matches are found. What to do upon completion
           if(matched == 8) {
-            //I need to fix this
             var endTime = new Date();
             var endTimeTick = endTime.getTime();
             console.log(endTimeTick, startTimeTick, (endTimeTick - startTimeTick)/1000);
@@ -165,7 +196,7 @@ function addClickBehavior(cards) {
               secondClickCard.classList.remove('open', 'show');
               openCards.pop();
               openCards.pop();
-          }, 1000);
+          }, 700);
         }
 
         firstClick = secondClick = null;
@@ -179,25 +210,24 @@ function starRating() {
 
   if(moves == 11) {
     myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
-    score = '4/5 stars';
+    score = '4 stars';
   }
 
   if(moves == 14) {
     myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
-    score = '3/5 stars';
+    score = '3 stars';
   }
 
   if(moves == 17) {
     myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
-    score = '2/5 stars';
+    score = '2 stars';
   }
 
   if(moves == 20) {
     myStars.getElementsByClassName('fa-star')[0].classList.remove('fa-star');
-    score = '1/5 stars';
+    score = '1 star';
   }
 }
-
 
 function resetCards(cards) {
   let deck = document.getElementsByClassName('deck');
